@@ -1,0 +1,16 @@
+mixin parseAttributes(attr)
+	if attr.children && attr.children.length
+		ul.children
+			each child in attr.children
+				li
+					.attr-content
+						.left
+							.top
+								span.name #{child.name}
+								if attr.type
+									span.type(className=attr.type) #{attr.type}
+						.description #{child.description}
+						if child.children && child.children.length
+							.open-ch Show child elements
+							.close-ch Hide child elements
+					+parseAttributes(child)

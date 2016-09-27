@@ -1,0 +1,20 @@
+{
+  "name": "aglio-theme-minimal",
+  "version": "1.0.0",
+  "description": "A minimal theme for api blueprint",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "swathysubhash@gmail.com",
+  "license": "ISC",
+  "devDependencies": {
+    "highlight.js": "^9.7.0",
+    "less": "^2.7.1",
+    "markdown-it": "^8.0.0",
+    "markdown-it-anchor": "^2.5.0",
+    "markdown-it-checkbox": "^1.1.0",
+    "markdown-it-container": "^2.0.0",
+    "pug": "^2.0.0-beta6"
+  }
+}

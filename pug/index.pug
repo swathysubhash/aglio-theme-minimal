@@ -1,0 +1,245 @@
+doctype html
+html
+	link(href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,300,700,800")
+	style(type='text/css').
+		!{css}
+body
+	include ./mixins
+	.header
+	.sidebar
+		nav.sidebar-nav
+			each navEl, heading in navGroups
+				.sidebar-nav-heading= heading
+				ul
+					each el in navEl
+						li.resource
+							a.sidebar-nav-item(href='#' + el.id)= el.name
+							if el.children && el.children.length
+								ul.actions
+									each child in el.children
+										li
+											a.sidebar-nav-item(href='#' + child.id)= child.name
+
+	.container
+		.doc-body.wid-12
+			each group in apiDs.resourceGroups
+				.row.group(id=group.name)
+					.wid-6.col1
+						.heading.group-heading #{group.name}
+						.description 
+							| !{group.description.html}
+						if group.description && group.description.attributes && group.description.attributes.length
+							.attributes
+								.heading Attributes
+								ul
+									each attr in group.description.attributes
+										li
+											.name #{attr.name}
+											.description #{attr.description}
+					.wid-6.col2
+						.rhs
+							| !{group.description.rhs}
+				if group.resources && group.resources.length			
+					each resource in group.resources
+						.row.resource(id=resource.id)
+							.wid-6.col1
+								.name.resource-heading #{resource.name}
+								.description 
+									| !{resource.description.html}
+								if resource.description && resource.description.attributes && resource.description.attributes.length
+									.attributes
+										.heading Attributes
+										ul
+											each attr in resource.description.attributes
+												li
+													.name #{attr.name}
+													.description #{attr.description}
+								if resource.parameters && resource.parameters.length
+									.parameters
+										div Parameters
+										each p in resource.parameters
+											.name #{p.name}
+											.description #{p.description}
+							.wid-6.col2
+								.rhs
+									| !{resource.description.rhs}
+						if resource.actions && resource.actions.length
+							each action in resource.actions
+								.row.action(id=action.id)
+									.wid-6.col1
+										.action-heading
+											span.name #{action.name}   
+											span.method(class=action.method) #{action.method}
+										.description 
+											| !{action.description.html}
+										if action.description && action.description.attributes && action.description.attributes.length
+											- var attributeLabel = action.method ? 'Arguments' : 'Attributes';
+											.attributes
+												.heading #{attributeLabel}
+												ul
+													each attr in action.description.attributes
+														li
+															.attr-content
+																.left
+																	.top
+																		span.name #{attr.name}
+																		if attr.type
+																			span.type(className=attr.type) #{attr.type}
+																.description #{attr.description}
+																if attr.children && attr.children.length
+																	.open-ch Show child elements
+																	.close-ch Hide child elements
+															+parseAttributes(attr)
+										if action.parameters && action.parameters.length
+											.parameters
+												div Parameters
+												each p in action.parameters
+													.name #{p.name}
+													.description #{p.description}
+									.wid-6.col2
+										.rhs
+											| !{action.description.rhs}
+											if action.method
+												.definition
+													.heading API Definition
+													pre.api-def-content #{action.method} #{host + resource.uri}
+											if action.examples && action.examples.length
+												each example in action.examples
+													.example
+														if example.requests && example.requests.length
+															each request in example.requests
+																.request
+																	.request-heading Example Request
+																	.headers
+																		.heading Headers
+																			if request.headers && request.headers.length
+																				.header-content
+																					each header in request.headers
+																						pre.header
+																							span.key #{header.name}
+																							span.colon  : 
+																							span.value #{header.value}
+																		if request.body
+																			.body
+																				.heading Body
+																				.content 
+																					| !{request.body}
+														if example.responses && example.responses.length
+															each response in example.responses
+																.response
+																	.response-heading Example Response
+																	.headers
+																		.heading Headers
+																			if response.headers && response.headers.length
+																				.header-content
+																					each header in response.headers
+																						pre.header
+																							span.key #{header.name}
+																							span.colon  : 
+																							span.value #{header.value}
+																		if response.body
+																			.body
+																				.heading Body
+																				.content 
+																					| !{response.body}
+	script.
+		!{waypoints}
+	script.
+		var wpres = document.querySelectorAll('.doc-body .row.resource')
+		var wpact = document.querySelectorAll('.doc-body .row.action')
+		function wpsHandler() {
+			var id = '#' + this.element.id;
+			var navEl = document.querySelector('.sidebar a[href=\"' + id + '\"]');
+			var actions;
+			if (this.element.classList.contains('action')) {
+				actions = navEl.parentNode 
+					&& navEl.parentNode.parentNode;
+			} else {
+				var navLi = navEl.parentNode;
+				actions = navLi.querySelector('.actions');	
+			}
+			var selected = sidebar.querySelector('li.resource .actions.open');
+			var selectedA = sidebar.querySelector('li.resource a.selected');
+			if (selectedA !== navEl) {
+				selectedA && selectedA.classList.remove('selected');
+				navEl && navEl.classList.add('selected');
+			}
+			if (actions && selected !== actions) {
+				selected && selected.classList.remove('open');
+				actions && actions.classList.add('open');
+			}
+		}
+		for(var i = 0;i < wpres.length; i++) {
+			new Waypoint({
+				continuous: false,
+				context: document.querySelector('.container'),
+				element: wpres[i],
+				handler: wpsHandler
+			});
+		}
+		for(var i = 0;i < wpact.length; i++) {
+			new Waypoint({
+				continuous: false,
+				context: document.querySelector('.container'),
+				element: wpact[i],
+				handler: wpsHandler
+			});
+		}
+		var wpov = document.querySelectorAll('#Overview h2');
+		for(var i = 0;i < wpov.length; i++) {
+			new Waypoint({
+				continuous: false,
+				context: document.querySelector('.container'),
+				element: wpov[i],
+				handler: wpsHandler
+			});
+		}
+		var sidebar = document.querySelector('.sidebar');
+		sidebar.addEventListener('click', function(e) {
+			var target = e.target || e.srcElement;
+			var parent = target && target.parentNode;
+			if(parent && parent.tagName.toUpperCase() === 'LI' && parent.classList.contains('resource')) {
+				e.stopPropagation();
+				var selected = sidebar.querySelector('li.resource .actions.open');
+				var actions = parent.querySelector('.actions');
+				if (actions && actions.classList) {
+					if(actions.classList.contains('open')) {
+						actions.classList.remove('open');
+					} else {
+						selected && selected.classList.remove('open');
+						actions.classList.add('open');
+					}
+				}
+			}
+		});
+		var docbody = document.querySelector('.doc-body');
+		docbody.addEventListener('click', function(e) {
+			var target = e.target || e.srcElement;
+			if(target && target.classList.contains('open-ch')) {
+				e.stopPropagation();
+				var targetLi = target.parentNode && target.parentNode.parentNode;
+				targetLi.classList.add('show');
+				var tCh = targetLi.children;
+				if (tCh && tCh.length > 1) {
+					var children = tCh[1];
+					if (children && !children.classList.contains('open')) {
+						children.classList.add('open')
+					}
+				}
+			} else if(target && target.classList.contains('close-ch')) {
+				e.stopPropagation();
+				var targetLi = target.parentNode && target.parentNode.parentNode;
+				targetLi.classList.remove('show');
+				var tCh = targetLi.children;
+				if (tCh && tCh.length > 1) {
+					var children = tCh[1];
+					if (children && children.classList.contains('open')) {
+						children.classList.remove('open')
+					}
+				}
+			}
+		});
+
+
+
+

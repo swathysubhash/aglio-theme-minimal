@@ -1,0 +1,250 @@
+body {
+	-webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    font-family: 'Open Sans', sans-serif;
+    cursor: default;
+    transition: linear left 0.1s;
+    a {
+    	color: #0099e5;
+    	text-decoration: none;
+    }
+    margin: 0;
+    padding: 0;
+    color: #4c555a;
+    font-weight: normal;
+    font-size: 14px;
+}
+
+.group-heading, h2 {
+    font-weight: normal;
+    color: #505050;
+    font-size: 24px;
+}
+
+.resource-heading {
+    color: #505050;
+    padding-top: 20px;
+    font-weight: normal;
+    font-size: 24px;
+}
+
+.action-heading {
+    word-break: break-word;
+    font-weight: normal;
+    font-size: 24px;
+}
+
+.hljs-attr {
+    color: #a6e22e;    
+}
+
+.hljs-number {
+    color: #77bcd7;    
+}
+
+.hljs-string {
+    color: #f8f8f8;    
+}
+
+.rhs .hljs {
+    border: 1px thin #e6e6e6;
+    overflow: auto;
+    padding: 30px;
+    border-radius: 3px;
+    background: #292925;
+}
+
+
+.container {
+    bottom: 0;
+    right: 0;
+    position: absolute;
+    top: 0;
+    left: 260px;
+    z-index: 50;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.doc-body {
+    box-sizing: border-box;
+    //padding-left: 260px;
+    background-image: -webkit-linear-gradient(-90deg, #303030 50%, #ffffff 50%);
+    background-image: linear-gradient(-90deg, #303030 50%, #ffffff 50%);    
+}
+
+.wid-12 {
+    width: 100%;
+}
+
+.wid-6 {
+    width: 50%;
+    float: left;
+    box-sizing: border-box;
+}
+
+.col1 {
+    padding: 30px;
+    background: white;
+}
+
+.col2 {
+    padding: 30px;
+}
+
+.row.resource .col1{
+    border-top: 1px solid #f0f4f7;
+}
+
+.row:after {
+    clear: both;
+    content: '';
+    display: table;
+}
+
+.sidebar-nav {
+	bottom: 0;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0px;
+    overflow: auto;
+    padding-left: 30px;
+    padding-top: 30px;
+    .sidebar-nav-item {
+        display: block;
+	    margin: 0;
+	    color: #4c555a;
+	    cursor: pointer;
+	    font-size: 14px;
+	    list-style-type: none;
+	    white-space: nowrap;
+	    overflow: hidden;
+	    text-overflow: ellipsis;
+    }
+    .sidebar-nav-heading {
+        color: #9b9999;
+    }
+}
+
+a.sidebar-nav-item.selected {
+    color: #ef5b25;
+}
+
+ul {
+    list-style: none;
+    padding: 0px !important;
+    margin: 0px !important;
+}
+
+li.resource > a {
+    font-weight: 600;
+}
+
+ul.actions {
+    display: none;
+    padding-left: 30px !important;
+    &.open {
+        display: block;
+    }
+}
+
+.sidebar {
+	bottom: 0;
+    left: 0;
+    position: absolute;
+    top: 0;
+    z-index: 75;
+    width: 260px;
+    border-right: 1px solid #f0f4f7;
+}
+
+.sidebar-nav-heading {
+    padding: 10px 0;
+    font-weight: 600;
+}
+
+
+
+
+.attributes{
+    padding: 30px 0;
+    .heading {
+        font-weight: 600;
+        margin-bottom: 20px;
+        color: #505050;
+    }
+    .open-ch, .close-ch {
+        color: #ef5b25;
+    }
+    .close-ch {
+        display: none;
+    }
+    ul li {
+         .left, .description {
+            display: inline-block;
+            width: 50%;
+            box-sizing: border-box;
+            vertical-align: top;
+        }
+        &.show > .attr-content{
+            border-bottom: none;
+            .open-ch {
+                display: none;
+            }
+            .close-ch {
+                display: block;
+            } 
+        }
+        .type {
+            padding: 0px 11px;
+            border-radius: 6px;
+            margin-left: 10px;
+            color: #6a6a95;
+        }
+    }
+    ul.children {
+        display: none;
+        border: 1px solid #f0f4f7;
+        border-radius: 3px;
+        padding: 10px !important;
+        &.open {
+            display: block;
+        }
+    }
+    .attr-content {
+        padding: 10px 0;
+        border-bottom: 1px solid #f0f4f7;
+        width: 100%;
+    }
+}
+
+.rhs {
+    .request-heading, .response-heading {
+        color: #d0d4d7;
+        padding: 30px 0px;
+    }
+    .header-content,.api-def-content {
+        overflow: auto;
+        padding: 5px 30px;
+        border-radius: 3px;
+        background: #292925;
+        color: #d0d4d7;
+    }
+    .headers {
+        .key {
+            color: #a6e22e;
+        }
+        .value {
+            color: #d0d4d7;
+        }
+    }
+}
+pre, code {
+    font-family: Source Code Pro,Menlo,monospace;
+    font-size: 13px;
+}
