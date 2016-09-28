@@ -1,6 +1,6 @@
 {
   "name": "aglio-theme-minimal",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A minimal theme for api blueprint",
   "main": "index.js",
   "scripts": {
