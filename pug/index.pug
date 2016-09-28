@@ -103,6 +103,10 @@ body
 												.definition
 													.heading API Definition
 													pre.api-def-content #{action.method} #{host + resource.uri}
+											if action.curl
+												.curl
+													.heading Curl Request
+													pre.api-def-content #{action.curl.replace('{host}', host)}
 											if action.examples && action.examples.length
 												each example in action.examples
 													.example

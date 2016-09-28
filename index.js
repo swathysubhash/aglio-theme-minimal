@@ -116,7 +116,7 @@ function getResourceData(resource) {
     description: processDescription(resource.description),
     uri: resource.uriTemplate,
     parameters: resource.parameters.map(function(p){ return processParameters(p); }),
-    actions: resource.actions.map(function(action) { return getActionData(action, id); }),
+    actions: resource.actions.map(function(action) { return getActionData(action, { resourceId: id, uri: resource.uriTemplate }); }),
   }
 
   resourceData.nav = {
@@ -129,14 +129,28 @@ function getResourceData(resource) {
 }
 
 
-function getActionData(action, resourceId) {
+function getActionData(action, options) {
+  var description = processDescription(action.description);
   return {
-    id: join(action.name, action.method, resourceId),
+    id: join(action.name, action.method, options.resourceId),
     name: action.name,
-    description: processDescription(action.description),
+    description: description,
     method: action.method,
+    attributes: action.attributes,
     parameters: action.parameters.map(function(p){ return processParameters(p); }),
-    examples: action.examples.map(function(example) { return getExampleData(example); })
+    examples: action.examples.map(function(example) { 
+      return getExampleData(example);
+    }),
+    curl: createCurl({
+      method: action.method,
+      uri: action.attributes && action.attributes.uriTemplate,
+      attributes: description && description.attributes,
+      request: action.examples 
+        && action.examples.length 
+        && action.examples[0].requests 
+        && action.examples[0].requests.length 
+        && action.examples[0].requests[0]
+    })
   }
 }
 
@@ -144,7 +158,7 @@ function getExampleData(example) {
   return {
     name: example.name,
     description: processDescription(example.description),
-    requests: example.requests.map(function(request) { return getRequestData(request); }),
+    requests: example.requests.map(function(request) { request.method = example.method;return getRequestData(request); }),
     responses: example.responses.map(function(response) { return getResponseData(response); })
   }
 }
@@ -154,7 +168,7 @@ function getRequestData(request) {
     name: request.name,
     description: processDescription(request.description),
     headers: request.headers,
-    body: request.body ? md.render('```json\n' + request.body + '\n```') : ''
+    body: request.body ? md.render('```json\n' + request.body + '\n```') : '',
   }
 }
 
@@ -165,4 +179,35 @@ function getResponseData(response) {
     headers: response.headers,
     body: response.body ? md.render('```json\n' + response.body + '\n```') : ''
   }
+}
+
+
+function createCurl(options) {
+  var curl = 'curl -v -X';
+  if (!options.method || !options.uri) return '';
+  var url;
+  if(options.uri){
+    url = options.uri;
+    if (options.attributes && options.attributes.length) {
+      options.attributes.forEach(function(attr) {
+        if(url.indexOf('{' + attr.name + '}') !== -1 && typeof attr.sample !== 'undefined') {
+          url = url.replace('{' + attr.name + '}', attr.sample)
+        }
+      });
+    }
+  }
+
+  curl += options.method;
+  curl += ' ';
+  if (options.request && options.request.headers) {
+    options.request.headers.forEach(function(header) {
+      curl += '-H ' + '"' + header.name + '":"' + header.value + '" '; 
+    });
+  }
+  if (options.request && options.request.body) {
+    curl += '-d ' + "'" + JSON.stringify(options.request.body) + "'"; 
+  }
+
+  curl += '{host}' + url;
+  return curl;
 }
